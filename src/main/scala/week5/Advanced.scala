@@ -55,11 +55,10 @@ object Advanced extends App {
 
     def strategy(availableAds: List[Advertiser], clicksLeft: Int): Unit = {
 
-      println("clicksLeft = " + clicksLeft)
-
       if (clicksLeft > 0) {
         var clickToGo = clicksLeft
 
+        // select winner for each auction
         val auction1 = availableAds.maxBy(_.exp1)
         val auction2 = (availableAds diff List(auction1)).maxBy(_.exp2)
         val auction3 = (availableAds diff List(auction1, auction2)).maxBy(_.exp3)
@@ -69,24 +68,27 @@ object Advanced extends App {
           auction2 -> 2,
           auction3 -> 3)
 
-        val clickMap = Map(
+        val clickInLastPhase = Map(
           auction1 -> auction1.click,
           auction2 -> auction2.click,
           auction3 -> auction3.click)
 
-        val budgetMap = Map(
+        val budgetInLasePhase = Map(
           auction1 -> auction1.budget,
           auction2 -> auction2.budget,
           auction3 -> auction3.budget)
 
         val players = auctionMap.unzip._1
         val adsOutOfBudget = players.minBy(ad => ad.budget / ad.bid)
-        val others = auctionMap.unzip._1.toList diff List(adsOutOfBudget)
+        // base line for computing clicks proportion
         val refCTR = adsOutOfBudget.ctrMap(auctionMap(adsOutOfBudget))
+
+        val others = auctionMap.unzip._1.toList diff List(adsOutOfBudget)
 
         var localClick = 0
         while (players.forall(p => p.budget >= p.bid) && clickToGo > 0) {
-          adsOutOfBudget.budget = BigDecimal(adsOutOfBudget.budget - adsOutOfBudget.bid).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
+          adsOutOfBudget.budget =
+            BigDecimal(adsOutOfBudget.budget - adsOutOfBudget.bid).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
           adsOutOfBudget.click += 1
 
           localClick += 1
@@ -94,15 +96,16 @@ object Advanced extends App {
           others foreach {
             ad =>
               val localCTR = ad.ctrMap(auctionMap(ad))
-              val deltaClick = nearestInteger(localClick / refCTR * localCTR)
-              ad.click = clickMap(ad) + deltaClick
-              ad.budget = budgetMap(ad) - ad.bid * deltaClick
+              val clickInCurrentPhase = nearestInteger(localClick / refCTR * localCTR)
+              ad.click = clickInLastPhase(ad) + clickInCurrentPhase
+              ad.budget = budgetInLasePhase(ad) - ad.bid * clickInCurrentPhase
           }
 
-          clickToGo = clicksLeft - players.map(ad => ad.click - clickMap(ad)).sum
+          clickToGo = clicksLeft - players.map(ad => ad.click - clickInLastPhase(ad)).sum
         }
 
         availableAds foreach println
+        println("clicksLeft = " + clickToGo)
         println
         strategy(availableAds diff List(adsOutOfBudget), clickToGo)
       } else {
