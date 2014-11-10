@@ -4,6 +4,8 @@
 result/*
 lib/
 
+data/
+
 # sbt specific
 dist/*
 target/
