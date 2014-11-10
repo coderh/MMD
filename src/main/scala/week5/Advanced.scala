@@ -135,7 +135,7 @@ object Advanced extends App {
       y <- points if y != x
     } yield (x, y, x distanceTo y)
 
-    val (furthest1, furthest2, distSquare) = dist.maxBy(_._3)
+    val (furthest1, furthest2, _) = dist.maxBy(_._3)
     val repSetInit = List(furthest1, furthest2)
     val others = points diff repSetInit
 
@@ -157,7 +157,7 @@ object Advanced extends App {
     representativeSet(others, repSetInit, 5)
   }
 
-  question2
-  //  question3
+  // question2
+  question3
 
 }
