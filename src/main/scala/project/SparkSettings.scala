@@ -12,9 +12,7 @@ object SparkSettings {
 
   val sc = new SparkContext(
     new SparkConf()
-      .setAppName("MMD")
+      .setAppName("Finding_Similar_Sentence")
       .setMaster("local[8]")
-      .set("spark.local.dir", "/home/spark/tmp")
-      .set("spark.logConf", "true"))
-
+      .set("spark.local.dir", "/tmp"))
 }
