@@ -10,22 +10,10 @@ import breeze.numerics.abs
  * Time: 9:42 PM
  */
 
+import pagerank.solver._
+
 object PageRank extends App {
 
-  def solve(m: DenseMatrix[Double], beta: Double = 1d, magnitude: Int = 1, eps: Double = 0.0001, iter: Int = 1000): DenseVector[Double] = {
-    val N = m.rows
-    var r = DenseVector.tabulate(N)(i => magnitude.toDouble / N)
-    var r_old = r
-    var cnt = 0
-
-    do {
-      r_old = r
-      r = (m * r).mapValues(_ * beta) + DenseVector.tabulate(N)(i => magnitude * (1 - beta) / N)
-      cnt = cnt + 1
-      println("iteration " + cnt + " => " + r)
-    } while (sum(abs(r_old - r)) > eps && cnt < iter)
-    r
-  }
 
   // Question 1:
 
