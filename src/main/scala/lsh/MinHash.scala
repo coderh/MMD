@@ -10,18 +10,18 @@ import scala.util.Random
  */
 object MinHash {
 
-  type HashFunction = Int => Int
+    type HashFunction = Int => Int
 
-  def generateHashFunctions(universeSize: Int, signatureSize: Int): Array[HashFunction] = {
+    def generateHashFunctions(universeSize: Int, signatureSize: Int): Array[HashFunction] = {
 
-    Array.tabulate(signatureSize) {
-      i =>
-        hashFunction(1 + 2 * Random.nextInt(1000), Random.nextInt(1000), universeSize)
+      Array.tabulate(signatureSize) {
+        i =>
+          hashFunction(1 + 2 * Random.nextInt(1000), Random.nextInt(1000), universeSize)
+      }
     }
-  }
 
-  def hashFunction(a: Int, b: Int, uz: Int): HashFunction = {
-    x: Int => (a * x + b) % uz
-  }
+    def hashFunction(a: Int, b: Int, uz: Int): HashFunction = {
+      x: Int => (a * x + b) % uz
+    }
 
 }
